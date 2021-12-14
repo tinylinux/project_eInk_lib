@@ -1,0 +1,2 @@
+../src/LED.c:22:6:led_power_on	16	static
+../src/LED.c:41:6:led_power_off	16	static
