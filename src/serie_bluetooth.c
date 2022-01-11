@@ -59,9 +59,9 @@ char check_bluetooth_received() {
 }
 
 void send_bluetooth(char* phrase) {
-	PutTerminalString(LPC_USART1, "Bouton 2 enfoncé\r\n");
+	PutTerminalString(LPC_USART1, phrase);
 	// Debug Begin
-	lcd_position(1,0);
+	lcd_position(0,0);
 	lcd_puts("Bluetooth sent");
 	// End Debug
 }
