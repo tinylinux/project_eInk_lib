@@ -8,6 +8,7 @@
 #include "ctimer.h"
 #include "serie_bluetooth.h"
 #include "i2c_clock.h"
+#include "dirac_ring.h"
 
 #define BP1  LPC_GPIO_PORT->B0[13]
 #define BP2  LPC_GPIO_PORT->B0[12]
@@ -41,6 +42,7 @@ int main(void) {
 
 		set_bluetooth();
 		set_clock();
+		set_ring();
 
 		//Configuration en sortie des broches P0_11, 17, 19 et 21
 		LPC_GPIO_PORT->DIR0 |= (1 << 17);
@@ -60,6 +62,7 @@ int main(void) {
 
 		//set_ctimer0();
 		init_lcd();
+		//currentNote = NNOTES*2+1;
 
 		uint8_t date, mois, jour, heure, minute, seconde;
 		uint16_t annee;
@@ -74,29 +77,44 @@ int main(void) {
 		lcd_position(1,0);
 		char text[30];
 		sprintf(text,"%2d/%2d/%4d - %2d:%2d:%2d\r\n",jour, mois, annee, heure, minute, seconde);
-		lcd_puts(text);
+		//lcd_puts(text);
 
 		write_date(date, jour, mois, annee);
 		lcd_position(0,0);
 		lcd_puts("Date written !");
 		write_time(heure, minute, seconde);
-		lcd_position(0,0);
+		lcd_position(1,0);
 		lcd_puts("Time written !");
+
+		uint8_t ringtone = 0;
 
 		while (1) {
 			oldseconde = seconde;
 			read_date(&date, &jour, &mois, &annee);
-			lcd_gohome();
-			lcd_puts("Date read !      ");
+			//lcd_gohome();
+			//lcd_puts("Date read !      ");
 			read_time(&heure, &minute, &seconde);
-			lcd_gohome();
-			lcd_puts("Time read !      ");
+			//lcd_gohome();
+			//lcd_puts("Time read !      ");
 			if (seconde != oldseconde)
 			{
-				lcd_gohome();
+				//lcd_gohome();
 				sprintf(text,"%2d/%2d/%4d - %2d:%2d:%2d\r\n",jour, mois, annee, heure, minute, seconde);
-				lcd_puts(text);
+				//lcd_puts(text);
 				send_bluetooth(text);
+			}
+			else{
+				if (seconde % 15 == 0 && ringtone == 0)
+				{
+					sonnerie();
+					send_bluetooth("Sonnerie");
+					ringtone = 1;
+				}
+				if (seconde % 15 == 1 && ringtone)
+				{
+					stop_sonnerie();
+					ringtone = 0;
+				}
 			}
 
 
