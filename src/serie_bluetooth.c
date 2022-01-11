@@ -17,6 +17,12 @@
 // USART 1 -> used for bluetooth
 
 void set_bluetooth() {
+	/*
+	 * set_bluetooth : () -> void
+	 * 		Configuration des ports UART1
+	 * 		pour l'intégration du module bluetooth
+	 * 		à la LPC804
+	 */
 	// Configuration UART1
 	LPC_SYSCON->UART1CLKSEL = 0;
 	LPC_SYSCON->SYSAHBCLKCTRL0 |=  UART1;
@@ -43,15 +49,22 @@ void set_bluetooth() {
 }
 
 char check_bluetooth_received() {
+	/*
+	 * check_bluetooth_received : () -> char
+	 * 		Fonction de vérification de réception
+	 * 		d'un caractère via la liaison UART
+	 * 		si oui, le caractère
+	 * 		sinon renvoie -1 (ne correspondant à aucun char)
+	 */
 	char received;
 	if (LPC_USART1->STAT & RXRDY)
 	{
 		received = LPC_USART1->RXDAT;
 		// Debug Begin
-		lcd_position(0,0);
+		/*lcd_position(0,0);
 		char str[20];
 		sprintf(str, "Touche : %c", received);
-		lcd_puts(str);
+		lcd_puts(str);*/
 		// Debug End
 		return received;
 	}
@@ -59,10 +72,16 @@ char check_bluetooth_received() {
 }
 
 void send_bluetooth(char* phrase) {
+	/*
+	 * send_bluetooth : char* -> void
+	 * 		À partir d'une chaîne de caractères donnée
+	 * 		transmet cette chaîne via liaison série
+	 * 		au module bluetooth
+	 */
 	PutTerminalString(LPC_USART1, phrase);
 	// Debug Begin
-	lcd_position(0,0);
-	lcd_puts("Bluetooth sent");
+	/*lcd_position(0,0);
+	lcd_puts("Bluetooth sent");*/
 	// End Debug
 }
 
