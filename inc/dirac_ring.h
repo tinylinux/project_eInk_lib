@@ -7,7 +7,7 @@
 #ifndef INC_DIRAC_RING_H_
 #define INC_DIRAC_RING_H_
 
-void set_ctimer0();
+void set_ctimer1();
 void set_ring();
 void sonnerie();
 void stop_sonnerie();

@@ -15,7 +15,7 @@
 #include "chip_setup.h"
 #include "dirac_ring.h"
 
-void set_ctimer0() {
+void set_ctimer1() {
 	/*
 	 * set_ctimer0 : () -> void
 	 * 		Réglage du ctimer0 pour le MR
@@ -65,7 +65,7 @@ void set_ring() {
 
 	LPC_MRT->Channel[0].CTRL = 0b11;
 
-	set_timer0();
+	set_ctimer1();
 
 	LPC_MRT->Channel[0].INTVAL = 15000000;
 }
