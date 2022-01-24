@@ -9,6 +9,7 @@
 #include "serie_bluetooth.h"
 #include "i2c_clock.h"
 #include "dirac_ring.h"
+#include "menu.h"
 
 #define BP1  LPC_GPIO_PORT->B0[13]
 #define BP2  LPC_GPIO_PORT->B0[12]
@@ -62,8 +63,8 @@ int main(void) {
 
 		//set_ctimer0();
 		init_lcd();
-		//currentNote = NNOTES*2+1;
 
+		uint8_t menu = 0;
 		uint8_t date, mois, jour, heure, minute, seconde;
 		uint16_t annee;
 		uint8_t oldseconde;
@@ -74,19 +75,23 @@ int main(void) {
 		heure = 21;
 		minute = 20;
 		seconde = 0;
-		lcd_position(1,0);
+		/*lcd_position(1,0);*/
 		char text[30];
 		sprintf(text,"%2d/%2d/%4d - %2d:%2d:%2d\r\n",jour, mois, annee, heure, minute, seconde);
+
 		//lcd_puts(text);
 
 		write_date(date, jour, mois, annee);
-		lcd_position(0,0);
-		lcd_puts("Date written !");
+		/*lcd_position(0,0);
+		lcd_puts("Date written !");*/
 		write_time(heure, minute, seconde);
-		lcd_position(1,0);
-		lcd_puts("Time written !");
+		/*lcd_position(1,0);
+		lcd_puts("Time written !");*/
+		displaymenu(menu);
 
 		uint8_t ringtone = 0;
+
+
 
 		while (1) {
 			oldseconde = seconde;
@@ -98,37 +103,35 @@ int main(void) {
 			//lcd_puts("Time read !      ");
 			if (seconde != oldseconde)
 			{
-				//lcd_gohome();
-				sprintf(text,"%2d/%2d/%4d - %2d:%2d:%2d\r\n",jour, mois, annee, heure, minute, seconde);
-				//lcd_puts(text);
+				lcd_gohome();
+				sprintf(text,"%2d:%2d:%2d\r\n", heure, minute, seconde);
+				lcd_puts(text);
 				send_bluetooth(text);
 			}
 			else{
-				if (seconde % 15 == 0 && ringtone == 0)
+				if (seconde % 30 == 0 && ringtone == 0)
 				{
 					sonnerie();
 					send_bluetooth("Sonnerie");
 					ringtone = 1;
 				}
-				if (seconde % 15 == 1 && ringtone)
+				if (seconde % 30 == 1 && ringtone)
 				{
 					stop_sonnerie();
 					ringtone = 0;
 				}
 			}
-
-
-			/*etat_bouton1_now = BP2;
+			etat_bouton1_now = BP2;
 			if ((etat_bouton1_now != etat_bouton1_before))
 			{
 				if (etat_bouton1_now)
 				{
-					send_bluetooth("Bouton 2 enfoncé\r\n");
+					changemenu(&menu);
 				}
 			}
 
 			etat_bouton1_before = etat_bouton1_now;
-
+			/*
 			received = check_bluetooth_received();
 			if (received >= 32 && received <= 126) // entre Espace et Tilde
 			{
