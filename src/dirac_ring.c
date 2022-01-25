@@ -70,13 +70,14 @@ void set_ring() {
 	LPC_MRT->Channel[0].INTVAL = 15000000;
 }
 
-void sonnerie() {
+void sonnerie(float freq) {
 	/*
-	 * sonnerie : () -> void
+	 * sonnerie : float -> void
 	 * 		Activation du Haut-parleur et de la sonnerie
+	 * 		à partir d'une fréquence donnée
 	 */
 	LPC_CTIMER0->MR[1] = 128;
-	LPC_CTIMER0->PR = (int) (15000000 / (523.55 * 256));
+	LPC_CTIMER0->PR = (int) (15000000 / (freq * 256));
 }
 
 void stop_sonnerie(){

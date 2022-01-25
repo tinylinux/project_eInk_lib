@@ -16,5 +16,6 @@
 
 void change_menu(uint8_t* menu);
 void display_menu(uint8_t menu);
+void change_freq(float* freq, char gotKey);
 
 #endif /* INC_MENU_H_ */

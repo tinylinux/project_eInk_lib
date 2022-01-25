@@ -9,7 +9,7 @@
 
 void set_ctimer1();
 void set_ring();
-void sonnerie();
+void sonnerie(float freq);
 void stop_sonnerie();
 
 

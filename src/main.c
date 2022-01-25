@@ -81,44 +81,58 @@ int main(void) {
 
 		//lcd_puts(text);
 
+		float freq_ring;
+		freq_ring = 523.25;
+		char get_bluetooth;
+
 		write_date(date, jour, mois, annee);
 		/*lcd_position(0,0);
 		lcd_puts("Date written !");*/
 		write_time(heure, minute, seconde);
 		/*lcd_position(1,0);
 		lcd_puts("Time written !");*/
-		displaymenu(menu);
+		display_menu(menu);
 
 		uint8_t ringtone = 0;
 
 
 
 		while (1) {
-			oldseconde = seconde;
-			read_date(&date, &jour, &mois, &annee);
-			//lcd_gohome();
-			//lcd_puts("Date read !      ");
 			read_time(&heure, &minute, &seconde);
-			//lcd_gohome();
-			//lcd_puts("Time read !      ");
-			if (seconde != oldseconde)
+			if ((seconde != oldseconde))
 			{
-				lcd_gohome();
-				sprintf(text,"%2d:%2d:%2d\r\n", heure, minute, seconde);
-				lcd_puts(text);
-				send_bluetooth(text);
-			}
-			else{
 				if (seconde % 30 == 0 && ringtone == 0)
 				{
-					sonnerie();
-					send_bluetooth("Sonnerie");
+					sonnerie(freq_ring);
+					send_bluetooth("Sonnerie \r\n");
 					ringtone = 1;
 				}
 				if (seconde % 30 == 1 && ringtone)
 				{
 					stop_sonnerie();
 					ringtone = 0;
+				}
+			}
+			if (menu == 1)
+			{
+				get_bluetooth = check_bluetooth_received();
+				change_freq(&freq_ring, get_bluetooth);
+			}
+			else if (menu == 3)
+			{
+				oldseconde = seconde;
+				read_date(&date, &jour, &mois, &annee);
+				//lcd_gohome();
+				//lcd_puts("Date read !      ");
+				read_time(&heure, &minute, &seconde);
+				//lcd_gohome();
+				//lcd_puts("Time read !      ");
+				if (seconde != oldseconde)
+				{
+					lcd_gohome();
+					sprintf(text,"%2d:%2d:%2d\r\n", heure, minute, seconde);
+					lcd_puts(text);
+					send_bluetooth(text);
 				}
 			}
 			etat_bouton1_now = BP2;
